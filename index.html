@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>LR Parsing Program</title>
+
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	 <script src="./pico/client.js"></script>
+    <script>
+        pico.load("example");
+    </script>
+
+	<link rel="stylesheet" type="text/css" href="tabs.css">
+	<script type="text/javascript" src="tabs.js"></script>
+
+	<style type="text/css">
+		div{
+			padding:8px;
+		}
+	</style>
+
+	<script type="text/javascript">
+
+$(document).ready(function(){
+
+
+
+var s = "Attempting to parse ab\n"+
+
+
+"STACK has :['$', 0]\n"+
+
+"Processing :ab$\n"+
+
+"    Reduce move , pop 0 symbols from the stack corresponding to R3\n"+
+"Perform GOTO move of 0 , A by pushing 2\n"+
+"STACK has :['$', 0, '2']\n"+
+
+"Processing :ab$\n"+
+
+"    Shift move,push 4 onto the stack\n"+
+"STACK has :['$', 0, '2', '4']\n"+
+
+"Processing :b$\n"+
+
+"    Reduce move , pop 0 symbols from the stack corresponding to R3\n"+
+"Perform GOTO move of 4 , A by pushing 6\n"+
+"STACK has :['$', 0, '2', '4', '6']\n"+
+
+"Processing :b$\n"+
+
+"    Shift move,push 8 onto the stack\n"+
+"STACK has :['$', 0, '2', '4', '6', '8']\n"+
+
+"Processing :$\n"+
+
+"    Reduce move , pop 4 symbols from the stack corresponding to R1 and push head of production: S\n"+
+"Perform GOTO move of 0 , S by pushing 1\n"+
+"STACK has :['$', 0, '1']\n"+
+
+"Processing :$\n"+
+"    \n"+
+"The parsing steps are\n"+ 
+
+"S->AaAb\n"+
+"A->#\n"+
+"A->#\n"+
+"The string ab has been accepted by the grammar\n"+
+
+
+
+"Attempting to parse ba\n"+
+
+
+"STACK has :['$', 0]\n"+
+
+"Processing :ba$\n"+
+
+"    Reduce move , pop 0 symbols from the stack corresponding to R4\n"+
+"Perform GOTO move of 0 , B by pushing 3\n"+
+"STACK has :['$', 0, '3']\n"+
+
+"Processing :ba$\n"+
+
+"    Reduce Shift move,push 5 onto the stack\n"+
+"STACK has :['$', 0, '3', '5']\n"+
+
+"Processing :a$\n"+
+
+"    Reduce move , pop 0 symbols from the stack corresponding to R4\n"+
+"Perform GOTO move of 5 , B by pushing 7\n"+
+"STACK has :['$', 0, '3', '5', '7']\n"+
+
+"Processing :a$\n"+
+
+"    Shift move,push 9 onto the stack\n"+
+"STACK has :['$', 0, '3', '5', '7', '9']\n"+
+
+"Processing :$:\n"+
+
+"    Reduce move , pop 4 symbols from the stack corresponding to R2 and push head of production: S\n"+
+"Perform GOTO move of 0 , S by pushing 1\n"+
+"STACK has :['$', 0, '1']\n"+
+
+"Processing :$\n"+
+"    \n" +
+"The parsing steps are\n"+ 
+
+"S->BbBa\n"+
+"B->#\n"+
+"B->#\n"+
+"The string ba has been accepted by the grammar\n"+
+
+
+
+"Attempting to parse aa\n"+
+
+
+"STACK has :['$', 0]\n"+
+
+"Processing :aa$\n"+
+
+"    Reduce move , pop 0 symbols from the stack corresponding to R3\n"+
+"Perform GOTO move of 0 , A by pushing 2\n"+
+"STACK has :['$', 0, '2']\n"+
+
+"Processing :aa$\n"+
+
+"    Shift move,push 4 onto the stack\n"+
+"STACK has :['$', 0, '2', '4']\n"+
+
+"Processing :a$\n"+
+"    \n" +
+
+"The string aa has been rejected by the grammar";
+
+
+
+var lines = s.split('\n');
+var stacks = ["<b>STACK</b>"];
+var processings = ["<b>INPUT</b>"];
+var actions = ["<b>ACTION</b>"];
+var finals = [];
+var n1=1;
+var n2=1;
+var n3=1;
+var n4=0;
+for(var i = 0;i < lines.length;i++){
+    //code here using lines[i] which will give you each line
+	// Find a <table> element with id="myTable":
+	stacks[n1] = /^STACK.*/.exec(lines[i]);
+	processings[n2] = /^Processing.*/.exec(lines[i])
+	actions[n3] = /^    .*/.exec(lines[i])
+	finals[n4] = /^The string.*/.exec(lines[i]);
+	if(stacks[n1])
+		n1++;
+	if(processings[n2])
+		n2++;
+	if(actions[n3])
+		n3++;
+	if(finals[n4])
+		n4++;
+		
+	console.log(""+processings[n2-1]);
+	if(processings[n2-1]=="Processing :$")
+		{
+			console.log("test");
+			stacks[n1] = "<b>STACK</b>";
+			processings[n2] = "<b>INPUT</b>";
+			actions[n3] = "<b>ACTION</b>";
+			//n1++;
+			//n2++;
+			//n3++;
+		}
+}
+
+for(var i = 0;i < stacks.length;i++){
+
+var table = document.getElementById("myTable");
+
+// Create an empty <tr> element and add it to the 1st position of the table:
+var row = table.insertRow(i);
+
+// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+var cell1 = row.insertCell(0);
+var cell2 = row.insertCell(1);
+var cell3 = row.insertCell(2);
+
+// Add some text to the new cells:
+cell1.innerHTML = stacks[i];
+cell2.innerHTML = processings[i];
+cell3.innerHTML = actions[i];
+}
+var finalstring="";
+for(var i = 0; i<finals.length; i++)
+	finalstring += "<b>" + finals[i] + "</br></br></b>";
+	document.getElementById("test").innerHTML = finalstring;
+	var terminals;
+	var nonterminals;
+    var counter = 1;
+		
+    $("#addButton").click(function () {
+		
+	var newTextBoxDiv = $(document.createElement('div'))
+	     .attr("id", 'TextBoxDiv' + counter);
+                
+	newTextBoxDiv.after().html('<label>Production #'+ counter + ' : </label>' +
+	      '<input type="text" name="textbox' + counter + 
+	      '" id="textbox' + counter + '" value="" >' +
+'<label>  :  </label>' + 
+'<input type="text" name="textbox' + counter + 
+	      '" id="textbox2' + counter + '" value="" >' 
+);
+            
+	newTextBoxDiv.appendTo("#TextBoxesGroup");
+
+				
+	counter++;
+     });
+	      $("#removeButton").click(function () {
+	if(counter==1){
+          alert("No more textbox to remove");
+          return false;
+       }   
+        
+	counter--;
+			
+        $("#TextBoxDiv" + counter).remove();
+			
+     });
+		
+     $("#getButtonValue").click(function () {
+
+	
+	var msg = '';
+	for(i=1; i<counter; i++){
+   	  //msg += "\n Textbox #" + i + " : " + $('#textbox' + i).val();
+		//msg += "\n Textbox #" + i + " : " + $('#textbox2' + i).val();
+		msg+=$('#textbox' + i).val()+":"+$('#textbox2' + i).val()+"\n"
+	}
+	example.hello(msg, function(response){
+	//alert(response);
+	var lines=response.split("\n")
+	terminals=lines[0].split(" ")
+	nonterminals=lines[1].split(" ")
+	var ind=terminals.indexOf("#")
+	terminals.splice(ind,1)
+	//alert("K")
+    document.getElementById('message').innerHTML = response;  
+  });
+    	  alert("You can now edit the table tab");
+     });
+	var statecount=0;
+	$("#addState").click(function () {
+		
+	var newTextBoxDiv = $(document.createElement('div'))
+	     .attr("id", 'TextBoxStateDiv' + statecount);
+    var string='<label>State#'+ statecount + ' : </label>' +
+	      '<input type="text" name="textStatebox' + statecount + 
+	      '" id="textStatebox' + statecount + '" value="" >' +
+'<label>  :  </label>' + 
+'<input type="text" name="textStatebox' + statecount + 
+	      '" id="textStatebox2' + statecount + '" value="" >' 
+	var row='<label>State#'+ statecount + ' : </label>'
+	//alert(terminals.length)
+	var ir=0;
+	for(ir=0;ir<terminals.length-1;ir++)
+	{
+		row+='<input placeholder='+terminals[ir]+' type="text" name="textStatebox' + statecount+""+ir+"" + 
+	      '" id="textStatebox' + statecount +""+ir+"" + '" value="" >'+'<label>        </label>'
+		//alert(terminals[ir])
+	}
+	for(var it=0;it<nonterminals.length-1;it++)
+	{
+		row+='<input placeholder='+nonterminals[it]+' type="text" name="textStatebox' + statecount+""+(ir+it)+"" + 
+	      '" id="textStatebox' + statecount +""+(ir+it)+""+ '" value="" >'+'<label>        </label>'
+	}
+	//alert(row)
+	newTextBoxDiv.after().html(row
+);
+            
+	newTextBoxDiv.appendTo("#TextBoxesStateGroup");
+
+				
+	statecount++;
+     });
+	     $("#show").click(function () {
+
+	
+	var msg = '';
+	for(var y=0;y<terminals.length-1;y++)
+		{
+			msg+=terminals[y]+"-"
+		}
+		for(var y=0;y<nonterminals.length-1;y++)
+		{
+			msg+=nonterminals[y]+"-"
+		}
+		msg+="\n"
+	for(i=0; i<statecount; i++){
+   	  //msg += "\n Textbox #" + i + " : " + $('#textbox' + i).val();
+		//msg += "\n Textbox #" + i + " : " + $('#textbox2' + i).val();
+		
+		for(var c=0;c<terminals.length+nonterminals.length-2;c++)
+		{
+		msg+=$('#textStatebox' + i+""+c+"").val()+"-"
+		}
+		msg+="\n"
+	}
+    	  //alert(msg);
+		  example.savetable(msg, function(response){
+		//alert(response);
+		alert("Table saved. You can now enter input string(s)")
+    document.getElementById('message').innerHTML = response;  
+  });
+     });
+	 $("#removeState").click(function () {
+		if(statecount==0)
+		{
+			alert("No more States left to remove")
+			return false;
+		}
+		//alert("HERE")
+		statecount--;
+		$('#TextBoxStateDiv'+(statecount)).remove()
+		});
+	 var inputs=0
+	 $("#addString").click(function () {	
+		var newTextBoxDiv = $(document.createElement('div'))
+	     .attr("id", 'TextBoxInputDiv' + inputs);
+		newTextBoxDiv.after().html('<input type="text" name="textInputbox' + inputs + 
+	      '" id="textInputbox' + inputs+'" value="" >'+'<label>        </label>')
+		newTextBoxDiv.appendTo("#TextBoxesInputGroup");
+		inputs++;
+     });
+	 $("#getResults").click(function () {
+		var msg=""
+		for(var c=0;c<inputs;c++)
+		{
+			msg+=$('#textInputbox'+c).val()+"\n"
+		}
+		//alert(msg)
+		example.saveinput(msg, function(response){
+		//alert(response);
+    document.getElementById('message').innerHTML = response;
+	location.href = "localhost:8800/index2.html"
+		
+  });
+		example.lrparse(function(response){
+			//alert(response)
+			document.getElementById("test").innerHTML = response;
+		});
+		});
+	$("#removeString").click(function () {
+		if(inputs==0)
+		{
+			alert("No more Strings left to remove")
+			return false;
+		}
+		//alert("HERE")
+		inputs--;
+		$('#TextBoxInputDiv'+(inputs)).remove()
+		});
+  });
+</script>
+</head>
+
+<body>
+<div class="tabs">
+    <ul class="tab-links">
+        <li class="active"><a href="#tab1">Grammar</a></li>
+        <li><a href="#tab2">Table</a></li>
+        <li><a href="#tab3">Input String</a></li>
+    </ul>
+ 
+    <div class="tab-content">
+        <div id="tab1" class="tab active">
+            <p>Enter Grammar</p><div id='TextBoxesGroup'>
+	</div>
+<input type='button' value='Add Production' id='addButton' class="myButton">
+<input type='button' value='Remove Production' id='removeButton' class="myButton">
+<input type='button' value='Save Grammar' id='getButtonValue' class="myButton">
+		<div class="help-tip">
+	<p>Enter the grammar productions.Enter in the format HEAD:BODY. Use '#' to represent epsilon</p>
+</div>
+        </div>
+ 
+        <div id="tab2" class="tab">
+            <p>Enter the table</p><div id='TextBoxesStateGroup'>
+	</div>
+	
+
+	<input type='button' value='Add State' id='addState' class="myButton" >
+	<input type='button' value='Remove State' id='removeState' class="myButton">
+	<input type='button' value='Save' id='show' class="myButton">
+			<div class="help-tip">
+	<p>Fill in the table which is obtained from state diagram . Use 'Si' for representing Shift moves and 'Ri' for representing reduce moves . Insert '*' if the table entry is not present</p>
+</div>
+            
+        </div>
+ 
+        <div id="tab3" class="tab">
+            <p>Enter the input String(s)</p> <div id='TextBoxesInputGroup'>
+			<div class="help-tip">
+	<p>Enter the input strings to parse</p>
+</div>
+	</div>
+		
+<input type='button' value='Add String' id='addString' class="myButton">
+<input type='button' value='Remove String' id='removeString' class="myButton">
+<input type='button' value='Get Results' id='getResults' class="myButton">	
+        </div>
+    </div>
+</div>
+<p id="test"> </p>
+
+<table id = "myTable" border="1" style="width:100%">
+  
+</table>
+</body>
+</html>
+

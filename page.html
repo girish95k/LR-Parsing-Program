@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Pico Example</title>
+    <script src="./pico/client.js"></script>
+    <script>
+        pico.load("example");
+    </script>
+</head>
+<body>
+  <p id="message"></p>
+  <script>
+  example.hello("Fergal", function(response){
+    document.getElementById('message').innerHTML = response;  
+  });
+  </script>
+</body>
+</html>

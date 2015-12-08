@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>LR Parsing Program</title>
+
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	 <script src="./pico/client.js"></script>
+    <script>
+        pico.load("example");
+    </script>
+
+	<link rel="stylesheet" type="text/css" href="tabs.css">
+	<script type="text/javascript" src="tabs.js"></script>
+
+	<style type="text/css">
+		div{
+			padding:8px;
+		}
+	</style>
+
+	<script type="text/javascript">
+
+$(document).ready(function(){
+	var terminals;
+	var nonterminals;
+    var counter = 1;
+		
+    $("#addButton").click(function () {
+		
+	var newTextBoxDiv = $(document.createElement('div'))
+	     .attr("id", 'TextBoxDiv' + counter);
+                
+	newTextBoxDiv.after().html('<label>Production #'+ counter + ' : </label>' +
+	      '<input type="text" name="textbox' + counter + 
+	      '" id="textbox' + counter + '" value="" >' +
+'<label>  :  </label>' + 
+'<input type="text" name="textbox' + counter + 
+	      '" id="textbox2' + counter + '" value="" >' 
+);
+            
+	newTextBoxDiv.appendTo("#TextBoxesGroup");
+
+				
+	counter++;
+     });
+	      $("#removeButton").click(function () {
+	if(counter==1){
+          alert("No more textbox to remove");
+          return false;
+       }   
+        
+	counter--;
+			
+        $("#TextBoxDiv" + counter).remove();
+			
+     });
+		
+     $("#getButtonValue").click(function () {
+
+	
+	var msg = '';
+	for(i=1; i<counter; i++){
+   	  //msg += "\n Textbox #" + i + " : " + $('#textbox' + i).val();
+		//msg += "\n Textbox #" + i + " : " + $('#textbox2' + i).val();
+		msg+=$('#textbox' + i).val()+":"+$('#textbox2' + i).val()+"\n"
+	}
+	example.hello(msg, function(response){
+	alert(response);
+	var lines=response.split("\n")
+	terminals=lines[0].split(" ")
+	nonterminals=lines[1].split(" ")
+	var ind=terminals.indexOf("#")
+	terminals.splice(ind,1)
+	alert("K")
+    document.getElementById('message').innerHTML = response;  
+  });
+    	  alert("You can now edit the table tab");
+     });
+	var statecount=0;
+	$("#addState").click(function () {
+		
+	var newTextBoxDiv = $(document.createElement('div'))
+	     .attr("id", 'TextBoxStateDiv' + statecount);
+    var string='<label>State#'+ statecount + ' : </label>' +
+	      '<input type="text" name="textStatebox' + statecount + 
+	      '" id="textStatebox' + statecount + '" value="" >' +
+'<label>  :  </label>' + 
+'<input type="text" name="textStatebox' + statecount + 
+	      '" id="textStatebox2' + statecount + '" value="" >' 
+	var row='<label>State#'+ statecount + ' : </label>'
+	alert(terminals.length)
+	var ir=0;
+	for(ir=0;ir<terminals.length-1;ir++)
+	{
+		row+='<input placeholder='+terminals[ir]+' type="text" name="textStatebox' + statecount+""+ir+"" + 
+	      '" id="textStatebox' + statecount +""+ir+"" + '" value="" >'+'<label>        </label>'
+		alert(terminals[ir])
+	}
+	for(var it=0;it<nonterminals.length-1;it++)
+	{
+		row+='<input placeholder='+nonterminals[it]+' type="text" name="textStatebox' + statecount+""+(ir+it)+"" + 
+	      '" id="textStatebox' + statecount +""+(ir+it)+""+ '" value="" >'+'<label>        </label>'
+	}
+	alert(row)
+	newTextBoxDiv.after().html(row
+);
+            
+	newTextBoxDiv.appendTo("#TextBoxesStateGroup");
+
+				
+	statecount++;
+     });
+	     $("#show").click(function () {
+
+	
+	var msg = '';
+	for(var y=0;y<terminals.length-1;y++)
+		{
+			msg+=terminals[y]+"-"
+		}
+		for(var y=0;y<nonterminals.length-1;y++)
+		{
+			msg+=nonterminals[y]+"-"
+		}
+		msg+="\n"
+	for(i=0; i<statecount; i++){
+   	  //msg += "\n Textbox #" + i + " : " + $('#textbox' + i).val();
+		//msg += "\n Textbox #" + i + " : " + $('#textbox2' + i).val();
+		
+		for(var c=0;c<terminals.length+nonterminals.length-2;c++)
+		{
+		msg+=$('#textStatebox' + i+""+c+"").val()+"-"
+		}
+		msg+="\n"
+	}
+    	  alert(msg);
+		  example.savetable(msg, function(response){
+		alert(response);
+    document.getElementById('message').innerHTML = response;  
+  });
+     });
+	 $("#removeState").click(function () {
+		if(statecount==0)
+		{
+			alert("No more States left to remove")
+			return false;
+		}
+		alert("HERE")
+		statecount--;
+		$('#TextBoxStateDiv'+(statecount)).remove()
+		});
+	 var inputs=0
+	 $("#addString").click(function () {	
+		var newTextBoxDiv = $(document.createElement('div'))
+	     .attr("id", 'TextBoxInputDiv' + inputs);
+		newTextBoxDiv.after().html('<input type="text" name="textInputbox' + inputs + 
+	      '" id="textInputbox' + inputs+'" value="" >'+'<label>        </label>')
+		newTextBoxDiv.appendTo("#TextBoxesInputGroup");
+		inputs++;
+     });
+	 $("#getResults").click(function () {
+		var msg=""
+		for(var c=0;c<inputs;c++)
+		{
+			msg+=$('#textInputbox'+c).val()+"\n"
+		}
+		alert(msg)
+		example.saveinput(msg, function(response){
+		alert(response);
+    document.getElementById('message').innerHTML = response;
+	location.href = "localhost:8800/index2.html"
+		
+  });
+		example.lrparse(function(response){
+			alert(response)
+			document.getElementById("test").innerHTML = response;
+		});
+		});
+	$("#removeString").click(function () {
+		if(inputs==0)
+		{
+			alert("No more Strings left to remove")
+			return false;
+		}
+		alert("HERE")
+		inputs--;
+		$('#TextBoxInputDiv'+(inputs)).remove()
+		});
+  });
+</script>
+</head>
+
+<body bgcolor="FEEFD">
+<script type="text/javascript" src="http://htmlfreecodes.com/codes/rain.js"></script>
+<div class="tabs">
+    <ul class="tab-links">
+        <li class="active"><a href="#tab1">Grammar</a></li>
+        <li><a href="#tab2">Table</a></li>
+        <li><a href="#tab3">Input String</a></li>
+    </ul>
+ 
+    <div class="tab-content">
+        <div id="tab1" class="tab active">
+            <p>Enter Grammar</p><div id='TextBoxesGroup'>
+	</div>
+<input type='button' value='Add Production' id='addButton' class="myButton">
+<input type='button' value='Remove Production' id='removeButton' class="myButton">
+<input type='button' value='Save Grammar' id='getButtonValue' class="myButton">
+		<div class="help-tip">
+	<p>Enter the grammar productions.Enter in the format HEAD:BODY. Use '#' to represent epsilon</p>
+</div>
+        </div>
+ 
+        <div id="tab2" class="tab">
+            <p>Enter the table</p><div id='TextBoxesStateGroup'>
+	</div>
+	
+
+	<input type='button' value='Add State' id='addState' class="myButton" >
+	<input type='button' value='Remove State' id='removeState' class="myButton">
+	<input type='button' value='Save' id='show' class="myButton">
+			<div class="help-tip">
+	<p>Fill in the table which is obtained from state diagram . Use 'Si' for representing Shift moves and 'Ri' for representing reduce moves . Insert '*' if the table entry is not present</p>
+</div>
+            
+        </div>
+ 
+        <div id="tab3" class="tab">
+            <p>Enter the input String(s)</p> <div id='TextBoxesInputGroup'>
+			<div class="help-tip">
+	<p>Enter the input strings to parse</p>
+</div>
+	</div>
+		
+<input type='button' value='Add String' id='addString' class="myButton">
+<input type='button' value='Remove String' id='removeString' class="myButton">
+<input type='button' value='Get Results' id='getResults' class="myButton">	
+        </div>
+    </div>
+</div>
+<p id="test"> </p>
+</body>
+</html>
+
